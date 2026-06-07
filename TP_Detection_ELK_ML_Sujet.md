@@ -61,7 +61,8 @@ L'objectif final est d'être capable de détecter automatiquement des comporteme
 
 ![TP Maquette](assets/Setup.png)
 
-> Les deux machines peuvent être des VMs, des machines physiques ou des conteneurs selon votre environnement de travail. Voir [IMPORT_VMS.md](IMPORT_VMS.md)
+> Les deux machines peuvent être des VMs, des machines physiques ou des conteneurs selon votre environnement de travail.
+> Voir [IMPORT_VMS.md](IMPORT_VMS.md)
 
 ### 1.3. Données disponibles
 
