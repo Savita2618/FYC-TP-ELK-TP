@@ -12,7 +12,7 @@
 
 1. [Introduction](#1-introduction)
    1. [Contexte](#11-contexte)
-   2. [TP Maquette](#12-TP Maquette)
+   2. [TP Maquette](#12-tp-maquette)
    3. [Données disponibles](#13-données-disponibles)
 2. [Partie 1 — Stack ELK](#2-partie-1--stack-elk----20-pts) *(20 pts)*
    1. [Vérification des services](#21-vérification-des-services)
@@ -59,11 +59,7 @@ L'objectif final est d'être capable de détecter automatiquement des comporteme
 
 ### 1.2. TP Maquette
 
-```
-
 ![TP Maquette](assets/Setup.png)
-
-```
 
 > Les deux machines peuvent être des VMs, des machines physiques ou des conteneurs selon votre environnement de travail. Voir [IMPORT_VMS.md](IMPORT_VMS.md)
 
