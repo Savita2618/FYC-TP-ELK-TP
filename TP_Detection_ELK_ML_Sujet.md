@@ -1,5 +1,5 @@
 ---
-itle: "TP — Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning"
+title: "TP — Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning"
 version: "1.0"
 date: "06/2026"
 module: "FYC"
