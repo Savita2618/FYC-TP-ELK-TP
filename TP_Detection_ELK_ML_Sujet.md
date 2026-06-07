@@ -1,11 +1,11 @@
 ---
-title: "TP — Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning"
-version: "1.0"
-date: "06/2026"
-module: "FYC"
-auteur: "Savita BALA, Swane CAMARA"
-duree: "4 heures"
-niveau: "M2"
+Title: "TP - Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning"
+Version: "1.0"
+Date: "06/2026"
+Module: "FYC"
+Auteurs: "Savita BALA, Swane CAMARA"
+Durée: "4 heures"
+Niveau: "M2"
 ---
 
 ## Sommaire
@@ -67,12 +67,12 @@ L'objectif final est d'être capable de détecter automatiquement des comporteme
 ### 1.3. Données disponibles
 
 **Sur la machine ELK :**
-- `/var/log/auth.log` — 50 000 logs SSH simulés (format syslog standard)
-- Index Elasticsearch `ssh-logs-*` — 50 000 documents indexés
+- `/var/log/auth.log` - 50 000 logs SSH simulés (format syslog standard)
+- Index Elasticsearch `ssh-logs-*` - 50 000 documents indexés
 
 **Sur la machine ML :**
-- `/home/adminml/ssh_dataset.csv` — 50 000 événements étiquetés
-- `/home/adminml/auth_realistic.log` — logs bruts correspondants
+- `/home/adminml/ssh_dataset.csv` - 50 000 événements étiquetés
+- `/home/adminml/auth_realistic.log` - logs bruts correspondants
 - Environnement Python virtuel : `/home/adminml/fyc-ml/`
 
 **Distribution du dataset :**
@@ -87,15 +87,15 @@ L'objectif final est d'être capable de détecter automatiquement des comporteme
 **IPs de référence :**
 
 ```
-IPs internes légitimes  : 192.168.1.50 — 192.168.1.75 — 10.0.0.25 — 192.168.1.100
-IPs externes légitimes  : 82.64.12.33 — 90.112.45.67
-IPs attaquantes connues : 185.220.101.45 — 42.96.145.33 — 165.232.189.42
-                          103.45.67.89  — 159.89.166.45 — 45.142.212.61
+IPs internes légitimes  : 192.168.1.50 - 192.168.1.75 - 10.0.0.25 - 192.168.1.100
+IPs externes légitimes  : 82.64.12.33 - 90.112.45.67
+IPs attaquantes connues : 185.220.101.45 - 42.96.145.33 - 165.232.189.42
+                          103.45.67.89  - 159.89.166.45 - 45.142.212.61
 ```
 
 ---
 
-## 2. Partie 1 — Stack ELK *(20 pts)*
+## 2. Partie 1 - Stack ELK *(20 pts)*
 
 ### 2.1. Vérification des services *(3 pts)*
 
@@ -107,9 +107,9 @@ Vérifiez que les quatre services de la stack ELK sont actifs :
 sudo systemctl status elasticsearch kibana logstash filebeat --no-pager | grep Active
 ```
 
-**Q1.1** — Relevez pour chacun des quatre services : son statut, sa date de démarrage, et son port d'écoute.
+**Q1.1** - Relevez pour chacun des quatre services : son statut, sa date de démarrage, et son port d'écoute.
 
-**Q1.2** — Vérifiez que les 50 000 documents sont bien indexés dans Elasticsearch :
+**Q1.2** - Vérifiez que les 50 000 documents sont bien indexés dans Elasticsearch :
 
 ```bash
 curl -s http://localhost:9200/ssh-logs-*/_count
@@ -121,7 +121,7 @@ Quel résultat obtenez-vous ? Que signifie le champ `count` dans la réponse JSO
 
 ### 2.2. Configuration Filebeat *(3 pts)*
 
-**Q1.3** — Affichez la configuration complète de Filebeat :
+**Q1.3** - Affichez la configuration complète de Filebeat :
 
 ```bash
 sudo cat /etc/filebeat/filebeat.yml
@@ -129,14 +129,14 @@ sudo cat /etc/filebeat/filebeat.yml
 
 Expliquez le rôle de chaque section : `filebeat.inputs`, `paths`, `fields`, `output.logstash`.
 
-**Q1.4** — Pourquoi Filebeat envoie-t-il les logs vers Logstash plutôt que directement vers Elasticsearch ?  
+**Q1.4** - Pourquoi Filebeat envoie-t-il les logs vers Logstash plutôt que directement vers Elasticsearch ?  
 Quelle étape de traitement serait perdue sans Logstash dans la chaîne ?
 
 ---
 
-### 2.3. Pipeline Logstash — Parsing Grok *(5 pts)*
+### 2.3. Pipeline Logstash - Parsing Grok *(5 pts)*
 
-**Q1.5** — Affichez le fichier de configuration du pipeline Logstash :
+**Q1.5** - Affichez le fichier de configuration du pipeline Logstash :
 
 ```bash
 sudo cat /etc/logstash/conf.d/ssh-pipeline.conf
@@ -144,7 +144,7 @@ sudo cat /etc/logstash/conf.d/ssh-pipeline.conf
 
 Le pipeline comporte trois blocs : `input`, `filter`, `output`. Expliquez le rôle de chacun dans la chaîne de traitement.
 
-**Q1.6** — Le bloc `filter` contient un filtre Grok. Expliquez ce qu'il fait sur la ligne de log suivante :
+**Q1.6** - Le bloc `filter` contient un filtre Grok. Expliquez ce qu'il fait sur la ligne de log suivante :
 
 ```
 Jan 15 03:22:17 server sshd[12453]: Failed password for root from 185.220.101.45 port 52341 ssh2
@@ -152,7 +152,7 @@ Jan 15 03:22:17 server sshd[12453]: Failed password for root from 185.220.101.45
 
 Listez **tous les champs extraits** et leur valeur pour cette ligne précise.
 
-**Q1.7** — Le filtre Ruby ajoute le champ `is_internal_ip`.  
+**Q1.7** - Le filtre Ruby ajoute le champ `is_internal_ip`.  
 Quelle sera sa valeur pour `185.220.101.45` ? Pour `192.168.1.50` ?  
 Expliquez la logique de détection utilisée.
 
@@ -162,13 +162,13 @@ Expliquez la logique de détection utilisée.
 
 Ouvrez Kibana dans votre navigateur et accédez au dashboard SSH.
 
-**Q1.8** — Le dashboard contient plusieurs visualisations. Pour **chacune** d'entre elles, expliquez :
+**Q1.8** - Le dashboard contient plusieurs visualisations. Pour **chacune** d'entre elles, expliquez :
 - Ce qu'elle représente
 - Pourquoi elle est utile pour un analyste SOC
 
-**Q1.9** — Les IPs internes (192.168.x.x) dominent le classement des top IPs sources. Est-ce anormal ? Justifiez votre réponse en vous appuyant sur la distribution du dataset.
+**Q1.9** - Les IPs internes (192.168.x.x) dominent le classement des top IPs sources. Est-ce anormal ? Justifiez votre réponse en vous appuyant sur la distribution du dataset.
 
-**Q1.10** — Le pie chart des méthodes d'authentification affiche environ **60% `publickey`** et **40% `password`**.  
+**Q1.10** - Le pie chart des méthodes d'authentification affiche environ **60% `publickey`** et **40% `password`**.  
 Que pouvez-vous conclure sur la posture de sécurité de l'infrastructure ?
 
 > **Conseil** : Utilisez le filtre de temps de Kibana pour isoler une plage horaire précise. Cela peut aider à observer des tendances.
@@ -179,7 +179,7 @@ Que pouvez-vous conclure sur la posture de sécurité de l'infrastructure ?
 
 Accédez à **Kibana → Dev Tools** pour exécuter les requêtes suivantes.
 
-**Q1.11** — Écrivez et exécutez une requête DSL pour afficher les **10 usernames les plus ciblés** par l'IP `45.142.212.61`.
+**Q1.11** - Écrivez et exécutez une requête DSL pour afficher les **10 usernames les plus ciblés** par l'IP `45.142.212.61`.
 
 Votre requête doit utiliser la structure suivante :
 
@@ -194,7 +194,7 @@ GET ssh-logs-*/_search
 
 Copiez la requête complète **et** le résultat JSON dans votre rapport.
 
-**Q1.12** — Écrivez une requête DSL pour afficher la **timeline des tentatives `Failed`** agrégées par heure, pour l'ensemble des IPs attaquantes connues.
+**Q1.12** - Écrivez une requête DSL pour afficher la **timeline des tentatives `Failed`** agrégées par heure, pour l'ensemble des IPs attaquantes connues.
 
 Copiez la requête et le résultat dans votre rapport.
 
@@ -206,13 +206,13 @@ Copiez la requête et le résultat dans votre rapport.
 
 ---
 
-## 3. Partie 2 — Elastic ML *(15 pts)*
+## 3. Partie 2 - Elastic ML *(15 pts)*
 
 ### 3.1. Job de détection d'anomalies *(5 pts)*
 
 Accédez à **Kibana → Machine Learning → Anomaly Detection → Jobs**.
 
-**Q2.1** — Relevez la configuration complète du job de détection existant :
+**Q2.1** - Relevez la configuration complète du job de détection existant :
 
 | Paramètre | Valeur |
 |---|---|
@@ -222,10 +222,10 @@ Accédez à **Kibana → Machine Learning → Anomaly Detection → Jobs**.
 | Influenceurs | |
 | Bucket span | |
 
-**Q2.2** — Pourquoi avoir choisi un **bucket span de 5 minutes** ?  
+**Q2.2** - Pourquoi avoir choisi un **bucket span de 5 minutes** ?  
 Qu'est-ce qui se passerait avec un bucket d'**1 minute** ? D'**1 heure** ?
 
-**Q2.3** — Pourquoi utiliser un job **Multi-metric** plutôt que **Single metric** dans ce contexte ?  
+**Q2.3** - Pourquoi utiliser un job **Multi-metric** plutôt que **Single metric** dans ce contexte ?  
 Quelle différence cela introduit-il pour la qualité de la détection ?
 
 ---
@@ -234,12 +234,12 @@ Quelle différence cela introduit-il pour la qualité de la détection ?
 
 Accédez à **ML → Anomaly Explorer** et sélectionnez le job de détection.
 
-**Q2.4** — Lisez l'Anomaly Timeline. Quelle IP source présente le **score d'anomalie le plus élevé** ? Quel est ce score ?
+**Q2.4** - Lisez l'Anomaly Timeline. Quelle IP source présente le **score d'anomalie le plus élevé** ? Quel est ce score ?
 
-**Q2.5** — Une anomalie de type **"Unexpected zero value"** est détectée sur des IPs internes.  
+**Q2.5** - Une anomalie de type **"Unexpected zero value"** est détectée sur des IPs internes.  
 Expliquez ce phénomène. S'agit-il d'une vraie attaque ? Justifiez votre réponse.
 
-**Q2.6** — Définissez la différence entre :
+**Q2.6** - Définissez la différence entre :
 
 - Une anomalie **temporelle** *(par rapport à l'historique d'une entité)*
 - Une anomalie **comportementale** *(par rapport aux autres entités de la population)*
@@ -250,7 +250,7 @@ Donnez un exemple concret de chaque dans le contexte de l'analyse SSH.
 
 ### 3.3. Seuils et limites *(5 pts)*
 
-**Q2.7** — Définissez et justifiez les seuils d'action que vous préconisez pour le score d'anomalie :
+**Q2.7** - Définissez et justifiez les seuils d'action que vous préconisez pour le score d'anomalie :
 
 | Plage de score | Action recommandée | Justification |
 |---|---|---|
@@ -260,7 +260,7 @@ Donnez un exemple concret de chaque dans le contexte de l'analyse SSH.
 
 Expliquez le **risque** associé à un seuil trop bas et à un seuil trop élevé.
 
-**Q2.8** — Identifiez **3 limites** du machine learning non supervisé pour la détection d'intrusions SSH.  
+**Q2.8** - Identifiez **3 limites** du machine learning non supervisé pour la détection d'intrusions SSH.  
 Pour chacune, proposez une solution complémentaire.
 
 ---
@@ -271,7 +271,7 @@ Pour chacune, proposez une solution complémentaire.
 
 ---
 
-## 4. Partie 3 — Pipeline Python supervisé *(30 pts)*
+## 4. Partie 3 - Pipeline Python supervisé *(30 pts)*
 
 Connectez-vous sur la machine ML et activez l'environnement Python :
 
@@ -281,7 +281,7 @@ source /home/adminml/fyc-ml/bin/activate
 
 ### 4.1. Exploration du dataset *(5 pts)*
 
-**Q3.1** — Chargez le fichier `ssh_dataset.csv` et affichez dans un shell Python interactif :
+**Q3.1** - Chargez le fichier `ssh_dataset.csv` et affichez dans un shell Python interactif :
 
 ```python
 import pandas as pd
@@ -294,14 +294,14 @@ print(f"Taux d'attaque : {df['label'].mean()*100:.1f}%")
 
 Relevez et commentez chaque résultat dans votre rapport.
 
-**Q3.2** — Pourquoi ce dataset est-il considéré comme **déséquilibré** ?  
+**Q3.2** - Pourquoi ce dataset est-il considéré comme **déséquilibré** ?  
 Quel problème cela pose-t-il pour l'entraînement d'un modèle de classification ?
 
 ---
 
 ### 4.2. Feature Engineering *(5 pts)*
 
-**Q3.3** — Créez les variables suivantes et justifiez le choix de chacune :
+**Q3.3** - Créez les variables suivantes et justifiez le choix de chacune :
 
 | Variable | Description | Justification attendue |
 |---|---|---|
@@ -313,13 +313,13 @@ Quel problème cela pose-t-il pour l'entraînement d'un modèle de classificatio
 | `username_enc` | Encodage numérique du username | |
 | `src_ip_enc` | Encodage numérique de l'IP source | |
 
-**Q3.4** — Pourquoi est-il nécessaire d'**encoder** les variables textuelles comme `username` et `src_ip` avant d'entraîner un modèle ?
+**Q3.4** - Pourquoi est-il nécessaire d'**encoder** les variables textuelles comme `username` et `src_ip` avant d'entraîner un modèle ?
 
 ---
 
 ### 4.3. Prétraitement et SMOTE *(5 pts)*
 
-**Q3.5** — Séparez le dataset en ensemble d'entraînement (70%) et de test (30%) avec stratification :
+**Q3.5** - Séparez le dataset en ensemble d'entraînement (70%) et de test (30%) avec stratification :
 
 ```python
 from sklearn.model_selection import train_test_split
@@ -330,7 +330,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 Justifiez l'utilisation du paramètre `stratify`.
 
-**Q3.6** — Appliquez SMOTE sur l'ensemble d'entraînement :
+**Q3.6** - Appliquez SMOTE sur l'ensemble d'entraînement :
 
 ```python
 from imblearn.over_sampling import SMOTE
@@ -340,13 +340,13 @@ X_train_bal, y_train_bal = smote.fit_resample(X_train, y_train)
 
 Expliquez le **principe de SMOTE**. Quelle est la distribution des classes avant et après application ?
 
-**Q3.7** — Normalisez les données avec `StandardScaler`. Pourquoi est-il important d'appliquer le scaler **uniquement sur les données d'entraînement** et de le réutiliser ensuite sur les données de test ?
+**Q3.7** - Normalisez les données avec `StandardScaler`. Pourquoi est-il important d'appliquer le scaler **uniquement sur les données d'entraînement** et de le réutiliser ensuite sur les données de test ?
 
 ---
 
 ### 4.4. Entraînement et comparaison des modèles *(8 pts)*
 
-**Q3.8** — Entraînez les trois modèles suivants et exécutez le script `ml_pipeline.py` :
+**Q3.8** - Entraînez les trois modèles suivants et exécutez le script `ml_pipeline.py` :
 
 ```bash
 python3 /home/adminml/ml_pipeline.py
@@ -360,12 +360,12 @@ Relevez pour chaque modèle : le **temps d'entraînement** et l'**AUC-ROC**.
 | Random Forest | | |
 | XGBoost | | |
 
-**Q3.9** — Pour chaque modèle, affichez le rapport de classification complet.  
+**Q3.9** - Pour chaque modèle, affichez le rapport de classification complet.  
 Quel modèle est le meilleur selon l'**AUC-ROC** ? Selon le **F1-score** ?
 
-**Q3.10** — En cybersécurité, quelle métrique est la plus critique entre le **rappel** et la **précision** pour la détection d'attaques ? Justifiez votre réponse avec un exemple concret.
+**Q3.10** - En cybersécurité, quelle métrique est la plus critique entre le **rappel** et la **précision** pour la détection d'attaques ? Justifiez votre réponse avec un exemple concret.
 
-**Q3.11** — Incluez dans votre rapport la **courbe ROC** générée par le script.  
+**Q3.11** - Incluez dans votre rapport la **courbe ROC** générée par le script.  
 Que représente l'aire sous la courbe (AUC) ?
 
 ---
@@ -388,16 +388,16 @@ param_grid = {
 }
 ```
 
-**Q3.12** — Relevez les **meilleurs paramètres** trouvés et le **meilleur F1-score** en validation croisée.
+**Q3.12** - Relevez les **meilleurs paramètres** trouvés et le **meilleur F1-score** en validation croisée.
 
-**Q3.13** — Comparez le F1-score du Random Forest **optimisé** avec celui du modèle **par défaut**.  
+**Q3.13** - Comparez le F1-score du Random Forest **optimisé** avec celui du modèle **par défaut**.  
 La différence est-elle significative ? Qu'en concluez-vous sur l'intérêt de l'optimisation ?
 
 ---
 
 ### 4.6. Prédiction en temps réel *(2 pts)*
 
-**Q3.14** — Construisez et prédisez un événement fictif présentant les caractéristiques suivantes :
+**Q3.14** - Construisez et prédisez un événement fictif présentant les caractéristiques suivantes :
 
 ```python
 new_event = pd.DataFrame([{
@@ -423,24 +423,24 @@ Quelle décision prenez-vous (bloquer / alerter / accepter) ? Justifiez le seuil
 
 ---
 
-## 5. Partie 4 — Cas pratique intégré *(15 pts)*
+## 5. Partie 4 - Cas pratique intégré *(15 pts)*
 
 ### 5.1. Simulation d'attaque en temps réel *(5 pts)*
 
-**Q4.1** — Dans Kibana, retrouvez toutes les connexions associées à l'IP `45.142.212.61`.  
+**Q4.1** - Dans Kibana, retrouvez toutes les connexions associées à l'IP `45.142.212.61`.  
 Relevez : **combien** de connexions, à **quelles heures**, sur **quels usernames**.
 
-**Q4.2** — Sur la machine ML, construisez un ensemble d'événements correspondant au profil d'attaque de cette IP et exécutez votre modèle.  
+**Q4.2** - Sur la machine ML, construisez un ensemble d'événements correspondant au profil d'attaque de cette IP et exécutez votre modèle.  
 Relevez les **probabilités d'attaque** obtenues pour chaque événement.
 
-**Q4.3** — L'IP `45.142.212.61` est-elle détectée comme suspecte par **Elastic ML** ?  
+**Q4.3** - L'IP `45.142.212.61` est-elle détectée comme suspecte par **Elastic ML** ?  
 Quel est son score d'anomalie ?
 
 ---
 
 ### 5.2. Analyse complète de l'IP suspecte *(5 pts)*
 
-**Q4.4** — En combinant les résultats ELK, Elastic ML et votre modèle Python, rédigez un **rapport d'analyse** de l'IP `45.142.212.61` répondant aux points suivants :
+**Q4.4** - En combinant les résultats ELK, Elastic ML et votre modèle Python, rédigez un **rapport d'analyse** de l'IP `45.142.212.61` répondant aux points suivants :
 
 - Période d'activité observée
 - Comptes ciblés
@@ -453,7 +453,7 @@ Quel est son score d'anomalie ?
 
 ### 5.3. Complémentarité ELK ML vs Python ML *(5 pts)*
 
-**Q4.5** — Complétez le tableau comparatif suivant :
+**Q4.5** - Complétez le tableau comparatif suivant :
 
 | Critère | Elastic ML | Python ML supervisé |
 |---|---|---|
@@ -464,10 +464,10 @@ Quel est son score d'anomalie ?
 | Facilité de mise à jour | | |
 | Interprétabilité | | |
 
-**Q4.6** — Dans une architecture SOC réelle, comment utiliseriez-vous ces deux approches de manière **complémentaire** ?  
+**Q4.6** - Dans une architecture SOC réelle, comment utiliseriez-vous ces deux approches de manière **complémentaire** ?  
 Décrivez un scénario concret où les deux sont nécessaires.
 
-**Q4.7** — Citez **deux limites** de l'approche supervisée Python dans un contexte réel de production.  
+**Q4.7** - Citez **deux limites** de l'approche supervisée Python dans un contexte réel de production.  
 Proposez une solution concrète pour chacune.
 
 ---
@@ -494,10 +494,10 @@ Proposez une solution concrète pour chacune.
 
 | Partie | Points |
 |---|---|
-| Partie 1 — Stack ELK | 20 pts |
-| Partie 2 — Elastic ML | 15 pts |
-| Partie 3 — Pipeline Python | 30 pts |
-| Partie 4 — Cas pratique intégré | 15 pts |
+| Partie 1 - Stack ELK | 20 pts |
+| Partie 2 - Elastic ML | 15 pts |
+| Partie 3 - Pipeline Python | 30 pts |
+| Partie 4 - Cas pratique intégré | 15 pts |
 | **Total** | **80 pts** |
 
 > *La qualité de la rédaction et la rigueur des justifications techniques seront valorisées dans chaque partie.*
@@ -531,7 +531,7 @@ source /home/adminml/fyc-ml/bin/activate
 
 ---
 
-### 6.2. Elasticsearch — Requêtes DSL
+### 6.2. Elasticsearch - Requêtes DSL
 
 Compter les documents d'un index :
 ```json
@@ -575,7 +575,7 @@ Agrégation temporelle par heure :
 
 ---
 
-### 6.3. Python — rappels scikit-learn
+### 6.3. Python - rappels scikit-learn
 
 Métriques de classification :
 ```python
@@ -615,7 +615,7 @@ print(gs.best_params_)
 
 ---
 
-### 6.4. Kibana — Navigation rapide
+### 6.4. Kibana - Navigation rapide
 
 | Fonctionnalité | Chemin |
 |---|---|
@@ -628,4 +628,4 @@ print(gs.best_params_)
 
 ---
 
-*FYC — Cybersécurité 5ème année — 2025/2026*
+*FYC - M2 - 2025/2026*
