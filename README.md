@@ -8,11 +8,9 @@
 | Fichier | Description |
 |---|---|
 | `TP_Detection_ELK_ML_Sujet.md` | Sujet du TP |
-| `CORRECTION_TP_Detection_ELK_ML.md` | Correction complète |
-| `FYC_Script_Video_TP_Corrige.md` | Scripts oraux des vidéos |
-| `ml_pipeline.py` | Pipeline ML supervisé (LR / RF / XGBoost) |
-| `generate_realistic.py` | Générateur de dataset SSH |
-| `optimize_rf.py` | Optimisation GridSearchCV |
+| `Scripts/ml_pipeline.py` | Pipeline ML supervisé (LR / RF / XGBoost) |
+| `Scripts/generate_realistic.py` | Générateur de dataset SSH |
+| `Scripts/optimize_rf.py` | Optimisation GridSearchCV |
 | `assets/` | Diagrammes et captures |
 
 ## Infrastructure
