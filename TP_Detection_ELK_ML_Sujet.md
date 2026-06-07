@@ -1,5 +1,4 @@
 ---
-
 # TP — Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning
 
 **Version :** 1.0 &nbsp;&nbsp;&nbsp;&nbsp; **Création :** 06/2026 &nbsp;&nbsp;&nbsp;&nbsp; **Module :** FYC
