@@ -1,4 +1,4 @@
-# FYC — Pipeline de détection d'intrusions SSH
+# FYC - Pipeline de détection d'intrusions SSH
 
 **Module :** Cybersécurité 5ème année ESGI  
 **Année :** 2025–2026
@@ -17,8 +17,8 @@
 
 ## Infrastructure
 
-- **VM1 — elk-stack** : Ubuntu 24.04 / ELK 8.x / Filebeat + Logstash + Elasticsearch + Kibana
-- **VM2 — ml-python** : Ubuntu 24.04 / Python 3.12 / scikit-learn / XGBoost / imbalanced-learn
+- **VM1 - elk-stack** : Ubuntu 24.04 / ELK 8.x / Filebeat + Logstash + Elasticsearch + Kibana
+- **VM2 - ml-python** : Ubuntu 24.04 / Python 3.12 / scikit-learn / XGBoost / imbalanced-learn
 
 Les images des VMs (VMDK) sont disponibles ici : ** **  
 → Voir [IMPORT_VMS.md](IMPORT_VMS.md) pour les importer dans VirtualBox ou VMware.
@@ -31,4 +31,4 @@ Les images des VMs (VMDK) sont disponibles ici : ** **
 | Random Forest | 1.0000 | 0.97 |
 | XGBoost | 1.0000 | 0.98 |
 
-Dataset : 50 000 événements SSH — 7% d'attaques — SMOTE appliqué sur le train set.
+Dataset : 50 000 événements SSH - 7% d'attaques - SMOTE appliqué sur le train set.
