@@ -31,22 +31,8 @@ L'objectif final est d'être capable de détecter automatiquement des comporteme
 
 ### 1.2. Infrastructure disponible
 
-![Infrastructure du TP](assets/infrastructure.png)
+![Maquette du TP](assets/Setup.png)
 
-```
-┌──────────────────────────────────────────────────────────┐
-│                    INFRASTRUCTURE TP                     │
-│                                                          │
-│  ┌─────────────────────┐   ┌─────────────────────────┐  │
-│  │   Machine ELK       │   │   Machine ML Python     │  │
-│  │                     │   │                         │  │
-│  │  • Filebeat 8.x     │   │  • Python 3.12          │  │
-│  │  • Logstash 8.x     │   │  • scikit-learn         │  │
-│  │  • Elasticsearch    │   │  • XGBoost              │  │
-│  │  • Kibana 8.x       │   │  • imbalanced-learn     │  │
-│  └─────────────────────┘   └─────────────────────────┘  │
-└──────────────────────────────────────────────────────────┘
-```
 
 Les deux machines peuvent être des VMs, des machines physiques ou des conteneurs selon votre environnement de travail.
 
