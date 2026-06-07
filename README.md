@@ -1,8 +1,8 @@
 # FYC - Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning
 
-**Module :** FYC
-
-**Année :** 2025 - 2026
+**Module : **FYC**
+**Année : **2025/2026**
+**Auteurs: **Savita BALA, Swane CAMARA**
 
 ## Contenu du repo
 
