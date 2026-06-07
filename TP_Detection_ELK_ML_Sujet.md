@@ -1,12 +1,12 @@
 ---
-# TP - Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning
-
-**Version :** 1.0 &nbsp;&nbsp;&nbsp;&nbsp; **Création :** 06/2026 &nbsp;&nbsp;&nbsp;&nbsp; **Module :** FYC
-
-**Auteur :** Savita, Swane &nbsp;&nbsp;&nbsp;&nbsp; **Durée :** 4 heures &nbsp;&nbsp;&nbsp;&nbsp; **Niveau :** M2
-
+itle: "TP — Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning"
+version: "1.0"
+date: "06/2026"
+module: "FYC"
+auteur: "Savita BALA, Swane CAMARA"
+duree: "4 heures"
+niveau: "M2"
 ---
-
 
 ## Sommaire
 
@@ -14,32 +14,32 @@
    1. [Contexte](#11-contexte)
    2. [TP Maquette](#12-tp-maquette)
    3. [Données disponibles](#13-données-disponibles)
-2. [Partie 1 — Stack ELK](#2-partie-1--stack-elk----20-pts) *(20 pts)*
+2. [Partie 1 - Stack ELK](#2-partie-1--stack-elk----20-pts) *(20 pts)*
    1. [Vérification des services](#21-vérification-des-services)
    2. [Configuration Filebeat](#22-configuration-filebeat)
-   3. [Pipeline Logstash — Parsing Grok](#23-pipeline-logstash--parsing-grok)
+   3. [Pipeline Logstash - Parsing Grok](#23-pipeline-logstash--parsing-grok)
    4. [Dashboard Kibana](#24-dashboard-kibana)
    5. [Requêtes DSL Elasticsearch](#25-requêtes-dsl-elasticsearch)
-3. [Partie 2 — Elastic ML](#3-partie-2--elastic-ml----15-pts) *(15 pts)*
+3. [Partie 2 - Elastic ML](#3-partie-2--elastic-ml----15-pts) *(15 pts)*
    1. [Job de détection d'anomalies](#31-job-de-détection-danomalies)
    2. [Anomaly Explorer](#32-anomaly-explorer)
    3. [Seuils et limites](#33-seuils-et-limites)
-4. [Partie 3 — Pipeline Python supervisé](#4-partie-3--pipeline-python-supervisé----30-pts) *(30 pts)*
+4. [Partie 3 - Pipeline Python supervisé](#4-partie-3--pipeline-python-supervisé----30-pts) *(30 pts)*
    1. [Exploration du dataset](#41-exploration-du-dataset)
    2. [Feature Engineering](#42-feature-engineering)
    3. [Prétraitement et SMOTE](#43-prétraitement-et-smote)
    4. [Entraînement et comparaison des modèles](#44-entraînement-et-comparaison-des-modèles)
    5. [Optimisation GridSearchCV](#45-optimisation-gridsearchcv)
    6. [Prédiction en temps réel](#46-prédiction-en-temps-réel)
-5. [Partie 4 — Cas pratique intégré](#5-partie-4--cas-pratique-intégré----15-pts) *(15 pts)*
+5. [Partie 4 - Cas pratique intégré](#5-partie-4--cas-pratique-intégré----15-pts) *(15 pts)*
    1. [Simulation d'attaque en temps réel](#51-simulation-dattaque-en-temps-réel)
    2. [Analyse complète de l'IP suspecte](#52-analyse-complète-de-lip-suspecte)
    3. [Complémentarité ELK ML vs Python ML](#53-complémentarité-elk-ml-vs-python-ml)
 6. [Mémos](#6-mémos)
    1. [Commandes Linux utiles](#61-commandes-linux-utiles)
-   2. [Elasticsearch — Requêtes DSL](#62-elasticsearch--requêtes-dsl)
-   3. [Python — rappels scikit-learn](#63-python--rappels-scikit-learn)
-   4. [Kibana — Navigation rapide](#64-kibana--navigation-rapide)
+   2. [Elasticsearch -Requêtes DSL](#62-elasticsearch--requêtes-dsl)
+   3. [Python - rappels scikit-learn](#63-python--rappels-scikit-learn)
+   4. [Kibana - Navigation rapide](#64-kibana--navigation-rapide)
 
 ---
 
