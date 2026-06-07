@@ -1,6 +1,7 @@
 # FYC - TP - Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning
 
 **Module :** FYC
+
 **Année :** 2025 - 2026
 
 ## Contenu du repo
