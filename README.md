@@ -1,6 +1,6 @@
 # FYC - TP - Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning
 
-**Module :** Cybersécurité 5ème année ESGI  
+**Module :** FYC
 **Année :** 2025 - 2026
 
 ## Contenu du repo
