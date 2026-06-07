@@ -1,7 +1,7 @@
 # FYC - Pipeline de détection d'intrusions SSH
 
 **Module :** Cybersécurité 5ème année ESGI  
-**Année :** 2025–2026
+**Année :** 2025 - 2026
 
 ## Contenu du repo
 
