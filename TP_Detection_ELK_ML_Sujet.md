@@ -17,9 +17,9 @@
 ## Sommaire
 
 1. [Introduction](#1-introduction)
-2. [Partie 1 - Stack ELK](#2-partie-1--stack-elk)
-3. [Partie 2 - Elastic ML](#3-partie-2--elastic-ml)
-4. [Partie 3 - Pipeline Python supervisé](#4-partie-3--pipeline-python-supervisé)
+2. [Partie 1 - Stack ELK](#2-partie-1---stack-elk)
+3. [Partie 2 - Elastic ML](#3-partie-2---elastic-ml)
+4. [Partie 3 - Pipeline Python supervisé](#4-partie-3---pipeline-python-supervisé)
 5. [Mémos](#5-mémos)
 
 ---
