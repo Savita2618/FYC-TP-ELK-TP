@@ -1,14 +1,14 @@
 # TP - Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning
 
-**Version :** 1.0 &nbsp;&nbsp;&nbsp;&nbsp;
+**Version :** 1.0
 
-**Création :** 06/2026 &nbsp;&nbsp;&nbsp;&nbsp; 
+**Création :** 06/2026
 
 **Module :** FYC
 
-**Auteur :** Savita BALA, Swane CAMARA &nbsp;&nbsp;&nbsp;&nbsp; 
+**Auteur :** Savita BALA, Swane CAMARA
 
-**Durée :** 3 heures &nbsp;&nbsp;&nbsp;&nbsp; 
+**Durée :** 3 heures
 
 **Niveau :** M2
 
