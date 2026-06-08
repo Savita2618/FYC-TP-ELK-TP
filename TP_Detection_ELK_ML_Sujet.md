@@ -1,19 +1,18 @@
-# TP — Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning
+# TP - Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning
 
-**Version :** 1.0 &nbsp;&nbsp;&nbsp;&nbsp; **Création :** 06/2026 &nbsp;&nbsp;&nbsp;&nbsp; **Module :** FYC — Cybersécurité 5ème année
+**Version :** 1.0 &nbsp;&nbsp;&nbsp;&nbsp; **Création :** 06/2026 &nbsp;&nbsp;&nbsp;&nbsp; **Module :** FYC
 
-**Auteur :** Kaj Backup &nbsp;&nbsp;&nbsp;&nbsp; **Durée :** 4 heures &nbsp;&nbsp;&nbsp;&nbsp; **Niveau :** Mastère Cybersécurité
+**Auteur :** Savita BALA, Swane CAMARA &nbsp;&nbsp;&nbsp;&nbsp; **Durée :** 3 heures &nbsp;&nbsp;&nbsp;&nbsp; **Niveau :** M2
 
 ---
 
 ## Sommaire
 
 1. [Introduction](#1-introduction)
-2. [Partie 1 — Stack ELK](#2-partie-1--stack-elk)
-3. [Partie 2 — Elastic ML](#3-partie-2--elastic-ml)
-4. [Partie 3 — Pipeline Python supervisé](#4-partie-3--pipeline-python-supervisé)
-5. [Partie 4 — Cas pratique intégré](#5-partie-4--cas-pratique-intégré)
-6. [Mémos](#6-mémos)
+2. [Partie 1 - Stack ELK](#2-partie-1--stack-elk)
+3. [Partie 2 - Elastic ML](#3-partie-2--elastic-ml)
+4. [Partie 3 - Pipeline Python supervisé](#4-partie-3--pipeline-python-supervisé)
+5. [Mémos](#5-mémos)
 
 ---
 
@@ -21,32 +20,35 @@
 
 ### 1.1. Contexte
 
-Dans ce TP, vous allez construire une chaîne complète de détection d'intrusions SSH, en combinant trois approches complémentaires :
+Dans ce TP, vous allez construire une chaîne complète de détection d'intrusions SSH, en combinant trois approches :
 
-La **stack ELK** pour la collecte, le parsing et la visualisation des logs. **Elastic ML** pour la détection d'anomalies non supervisée. Un **pipeline Python** avec Machine Learning supervisé pour la classification des événements.
+La stack ELK pour la collecte, le parsing et la visualisation des logs.
+
+Elastic ML pour la détection d'anomalies non supervisée.
+
+Un pipeline Python avec Machine Learning supervisé pour la classification des événements.
 
 L'objectif final est d'être capable de détecter automatiquement des comportements suspects dans des journaux de connexion SSH, en comprenant les forces et limites de chaque approche.
 
 ---
 
-### 1.2. Infrastructure disponible
+### 1.2. Maquette du TP
 
 ![Maquette du TP](assets/Setup.png)
 
-
-Les deux machines peuvent être des VMs, des machines physiques ou des conteneurs selon votre environnement de travail.
+> Les deux machines peuvent être des VMs, des machines physiques ou des conteneurs selon votre environnement de travail. Les VMs fournies pour ce TP sont déjà préconfigurées et entièrement installées à votre disposition. Voir [IMPORT_VMS.md](IMPORT_VMS.md)
 
 ---
 
 ### 1.3. Données disponibles
 
 **Sur la machine ELK :**
-- `/var/log/auth.log` — 50 000 logs SSH simulés (format syslog standard)
-- Index Elasticsearch `ssh-logs-*` — 50 000 documents indexés
+- `/var/log/auth.log` - 50 000 logs SSH simulés (format syslog standard)
+- Index Elasticsearch `ssh-logs-*` - 50 000 documents indexés
 
 **Sur la machine ML :**
-- `/home/adminml/ssh_dataset.csv` — 50 000 événements étiquetés
-- `/home/adminml/auth_realistic.log` — logs bruts correspondants
+- `/home/adminml/ssh_dataset.csv` - 50 000 événements étiquetés
+- `/home/adminml/auth_realistic.log` - logs bruts correspondants
 - Environnement Python virtuel : `/home/adminml/fyc-ml/`
 
 **Distribution du dataset :**
@@ -61,15 +63,19 @@ Les deux machines peuvent être des VMs, des machines physiques ou des conteneur
 **IPs de référence :**
 
 ```
-IPs internes légitimes  : 192.168.1.50 — 192.168.1.75 — 10.0.0.25 — 192.168.1.100
-IPs externes légitimes  : 82.64.12.33 — 90.112.45.67
-IPs attaquantes connues : 185.220.101.45 — 42.96.145.33 — 165.232.189.42
-                          103.45.67.89  — 159.89.166.45 — 45.142.212.61
+IPs internes légitimes  : 192.168.1.50 - 192.168.1.75 - 10.0.0.25 - 192.168.1.100
+IPs externes légitimes  : 82.64.12.33 - 90.112.45.67
+IPs attaquantes connues : 185.220.101.45 - 42.96.145.33 - 165.232.189.42
+                          103.45.67.89  - 159.89.166.45 - 45.142.212.61
 ```
 
 ---
 
-## 2. Partie 1 — Stack ELK
+> Une fois les deux VMs importées et les cartes réseau configurées, on commence par vérifier les services de la stack ELK et par comprendre chaque fichier de configuration. Cette étape est essentielle avant de passer à la suite.
+
+---
+
+## 2. Partie 1 - Stack ELK
 
 ### 2.1. Vérification des services
 
@@ -78,6 +84,8 @@ Connectez-vous sur la machine ELK. Vérifiez que les quatre services sont actifs
 ```bash
 sudo systemctl status elasticsearch kibana logstash filebeat --no-pager | grep Active
 ```
+
+Les 4 services doivent afficher le statut `active (running)`.
 
 Vérifiez que les 50 000 documents sont indexés dans Elasticsearch :
 
@@ -95,9 +103,11 @@ Affichez la configuration complète de Filebeat :
 sudo cat /etc/filebeat/filebeat.yml
 ```
 
+Filebeat contient trois sections : `filebeat.inputs`, `fields`, `output.logstash`.
+
 ---
 
-### 2.3. Pipeline Logstash — Parsing Grok
+### 2.3. Pipeline Logstash - Parsing Grok
 
 Affichez le fichier de configuration du pipeline Logstash :
 
@@ -113,19 +123,19 @@ Le filtre Grok extrait les champs d'une ligne de log SSH standard :
 Jan 15 03:22:17 server sshd[12453]: Failed password for root from 185.220.101.45 port 52341 ssh2
 ```
 
-Le filtre Ruby ajoute le champ `is_internal_ip` en vérifiant si l'IP source appartient aux plages RFC 1918 (192.168.x.x, 10.x.x.x, 172.16.x.x).
+> Le filtre Ruby ajoute le champ `is_internal_ip` en vérifiant si l'IP source appartient aux plages privées (192.168.Y.Z, 10.X.Y.Z, 172.16.Y.Z), c'est-à-dire les adresses IP privées définies par le RFC 1918.
 
 ---
 
 ### 2.4. Dashboard Kibana
 
-Ouvrez Kibana dans votre navigateur et accédez au dashboard SSH.
+Ouvrez Kibana dans votre navigateur, accédez au dashboard et cliquez sur **SSH Security Dashboard**.
 
-Le dashboard contient quatre visualisations :
+Ce dashboard contient quatre visualisations :
 
 La **timeline Accepted/Failed** montre l'évolution du trafic SSH dans le temps, permettant de repérer des pics d'échecs d'authentification.
 
-Le **top des IPs sources** affiche les machines les plus actives. Les IPs internes dominent naturellement le classement — c'est cohérent avec la distribution du dataset où 85% du trafic est légitime.
+Le **top des IPs sources** affiche les machines les plus actives. Les IPs internes dominent le classement, ce qui est cohérent avec la distribution du dataset où 85% du trafic est légitime.
 
 Le **top des usernames ciblés** révèle les comptes les plus exposés. La présence de comptes génériques comme `admin`, `test`, `postgres` ou `root` indique des tentatives par dictionnaire.
 
@@ -135,7 +145,7 @@ Le **pie chart des méthodes d'authentification** affiche environ 60% `publickey
 
 ### 2.5. Requêtes DSL Elasticsearch
 
-Accédez à **Kibana → Dev Tools**.
+Accédez à **Kibana → Dev Tools** pour exécuter les requêtes suivantes.
 
 **Top usernames ciblés par une IP suspecte :**
 
@@ -184,7 +194,7 @@ GET ssh-logs-*/_search
 
 ---
 
-## 3. Partie 2 — Elastic ML
+## 3. Partie 2 - Elastic ML
 
 ### 3.1. Job de détection d'anomalies
 
@@ -207,9 +217,9 @@ Accédez à **ML → Anomaly Explorer** et sélectionnez le job de détection.
 
 L'Anomaly Timeline affiche les scores par IP source dans le temps. Plusieurs comportements distincts sont visibles :
 
-Les entrées avec `src_ip` vide (score élevé) correspondent aux événements système locaux — cron, systemd, PAM — qui n'ont pas d'IP source. Logstash ne peut pas extraire le champ, il reste vide. C'est du bruit de parsing, pas une attaque.
+Les entrées avec `src_ip` vide correspondent aux événements système locaux — cron, systemd, PAM — qui n'ont pas d'IP source. Logstash ne peut pas extraire le champ, il reste vide. C'est du bruit de parsing, pas une attaque.
 
-Les IPs internes comme `192.168.1.50` (score 95) présentent une anomalie de type "Unexpected zero value" : l'IP était habituellement active avec ~47 connexions par fenêtre, puis a brutalement disparu. Machine éteinte ou maintenance — faux positif classique.
+Les IPs internes comme `192.168.1.50` (score 95) présentent une anomalie de type "Unexpected zero value" : l'IP était habituellement active avec environ 47 connexions par fenêtre, puis a brutalement disparu. Machine éteinte ou maintenance — faux positif classique.
 
 Les IPs externes comme `194.165.16.72` (score 21) présentent une anomalie de type "6x higher" : activité 6 fois supérieure à la normale. Score faible mais signal réellement suspect.
 
@@ -231,7 +241,7 @@ Elastic ML ne fait pas la différence entre une absence malveillante et une abse
 
 ---
 
-## 4. Partie 3 — Pipeline Python supervisé
+## 4. Partie 3 - Pipeline Python supervisé
 
 Connectez-vous sur la machine ML et activez l'environnement Python :
 
@@ -243,6 +253,8 @@ source /home/adminml/fyc-ml/bin/activate
 
 ### 4.1. Exploration du dataset
 
+Une fois l'environnement Python activé, créez un fichier `explore_dataset.py`, copiez-collez le code suivant, puis exécutez-le pour charger le fichier `ssh_dataset.csv` :
+
 ```python
 import pandas as pd
 df = pd.read_csv('/home/adminml/ssh_dataset.csv')
@@ -252,13 +264,13 @@ print(df['label'].value_counts())
 print(f"Taux d'attaque : {df['label'].mean()*100:.1f}%")
 ```
 
-Le dataset contient 50 000 événements avec un taux d'attaque de 7% (3 500 attaques, 46 500 normaux). Ce déséquilibre est typique des données de sécurité réelles et nécessite un traitement spécifique avant l'entraînement.
+Vous verrez que ce dataset contient environ 50 000 événements avec un taux d'attaque de 7% (3 500 attaques, 46 500 normaux). Ce déséquilibre est typique des données de sécurité réelles et nécessite un traitement spécifique avant l'entraînement.
 
 ---
 
 ### 4.2. Feature Engineering
 
-Les variables suivantes sont créées à partir des champs bruts :
+Jetons maintenant un coup d'œil au script `ml_pipeline.py`. C'est ici qu'on transforme les données brutes en variables utilisables par les algorithmes.
 
 | Variable | Description |
 |---|---|
@@ -301,9 +313,25 @@ SMOTE génère des exemples synthétiques en interpolant entre des attaques exis
 
 ### 4.4. Entraînement et comparaison des modèles
 
+Exécutez le script :
+
 ```bash
 python3 /home/adminml/ml_pipeline.py
 ```
+
+Sur la sortie du terminal, observez la section `[4/6]` qui présente les résultats des trois modèles entraînés.
+
+---
+
+**Comment fonctionnent ces trois modèles ?**
+
+**Régression Logistique** — C'est le modèle le plus simple. Il cherche une frontière linéaire (une droite ou un hyperplan) qui sépare les connexions normales des attaques dans l'espace des features. Si un événement tombe d'un côté de la frontière, il est classé normal ; de l'autre côté, attaque. Son avantage est sa rapidité et son interprétabilité. Sa limite : il suppose que la séparation entre les classes est linéaire, ce qui n'est pas toujours le cas en réalité.
+
+**Random Forest** — C'est un ensemble de 100 arbres de décision entraînés indépendamment, chacun sur un sous-ensemble aléatoire des données et des features. Chaque arbre vote pour une classe, et la majorité l'emporte. Le fait de combiner plusieurs arbres imparfaits produit un modèle global robuste et précis. Il gère bien les relations non-linéaires et est résistant au surapprentissage.
+
+**XGBoost** — C'est un algorithme de gradient boosting. Contrairement au Random Forest où les arbres sont construits en parallèle, ici ils sont construits en séquence. Chaque nouvel arbre se concentre sur les erreurs commises par les arbres précédents et cherche à les corriger. Le résultat est un modèle très performant, surtout sur des données tabulaires comme les nôtres, avec un temps d'entraînement très court.
+
+---
 
 | Modèle | Temps (s) | AUC-ROC |
 |---|---|---|
@@ -311,33 +339,15 @@ python3 /home/adminml/ml_pipeline.py
 | Random Forest | 1.34 | 1.0000 |
 | XGBoost | 0.17 | 1.0000 |
 
-En cybersécurité, le **recall** est la métrique prioritaire : manquer une vraie attaque est plus dangereux qu'avoir un faux positif.
+Le **recall** est la métrique prioritaire : en fait, manquer une vraie attaque est plus dangereux qu'avoir un faux positif.
 
 Les AUC très élevées s'expliquent par la nature synthétique du dataset. En production réelle, les AUC se situeraient entre 0.92 et 0.97.
 
 ---
 
-### 4.5. Optimisation GridSearchCV
+### 4.5. Prédiction en temps réel
 
-```bash
-python3 /home/adminml/optimize_rf.py
-```
-
-La grille testée sur Random Forest :
-
-```python
-param_grid = {
-    'n_estimators':      [50, 100, 200],
-    'max_depth':         [10, 20, None],
-    'min_samples_split': [2, 5, 10]
-}
-```
-
-Meilleurs paramètres obtenus : `max_depth=20`, `min_samples_split=2`, `n_estimators=100`. F1-score CV : 0.9969. F1-score test : 0.9704.
-
----
-
-### 4.6. Prédiction en temps réel
+Réexécutez le script pour observer la prédiction sur un événement fictif présentant les caractéristiques suivantes :
 
 ```python
 new_event = pd.DataFrame([{
@@ -356,31 +366,7 @@ Le modèle retourne une probabilité d'attaque de 77% pour cet événement (3h d
 
 ---
 
-## 5. Partie 4 — Cas pratique intégré
-
-### 5.1. Analyse de l'IP suspecte 45.142.212.61
-
-Dans Kibana Dev Tools, récupérer toutes les connexions associées à cette IP :
-
-```json
-GET ssh-logs-*/_search
-{
-  "size": 0,
-  "query": { "term": { "src_ip.keyword": "45.142.212.61" }},
-  "aggs": {
-    "par_heure": {
-      "date_histogram": { "field": "@timestamp", "calendar_interval": "hour" }
-    },
-    "usernames_cibles": {
-      "terms": { "field": "username.keyword", "size": 10 }
-    }
-  }
-}
-```
-
----
-
-### 5.2. Complémentarité ELK ML vs Python ML
+### 4.6. Tableau comparatif ELK ML vs Python ML
 
 | Critère | Elastic ML | Python ML supervisé |
 |---|---|---|
@@ -391,13 +377,13 @@ GET ssh-logs-*/_search
 | Facilité de mise à jour | Automatique | Réentraînement requis |
 | Interprétabilité | Score uniquement | Probabilité + feature importance |
 
-Dans un SOC réel, les deux approches coexistent en cascade : Elastic ML pour la détection du comportement anormal incluant les attaques inconnues, Python ML pour la classification rapide et la probabilité chiffrée sur les patterns connus.
+Dans un SOC réel, les deux approches se combinent en pipeline : Elastic ML détecte les comportements anormaux, y compris les attaques inconnues, tandis que Python ML prend le relais pour classifier rapidement les patterns connus et leur associer une probabilité chiffrée.
 
 ---
 
-## 6. Mémos
+## 5. Mémos
 
-### 6.1. Commandes Linux utiles
+### 5.1. Commandes Linux utiles
 
 ```bash
 # Vérifier l'état d'un service
@@ -416,7 +402,7 @@ source /home/adminml/fyc-ml/bin/activate
 
 ---
 
-### 6.2. Elasticsearch — Requêtes DSL
+### 5.2. Elasticsearch - Requêtes DSL
 
 ```json
 GET ssh-logs-*/_count
@@ -441,26 +427,7 @@ GET ssh-logs-*/_search
 
 ---
 
-### 6.3. Python — rappels scikit-learn
-
-```python
-from sklearn.metrics import classification_report, roc_auc_score
-print(classification_report(y_test, y_pred, target_names=['Normal', 'Attaque']))
-auc = roc_auc_score(y_test, y_proba)
-
-from imblearn.over_sampling import SMOTE
-smote = SMOTE(random_state=42)
-X_bal, y_bal = smote.fit_resample(X_train, y_train)
-
-from sklearn.model_selection import GridSearchCV
-gs = GridSearchCV(model, param_grid, cv=3, scoring='f1', n_jobs=-1)
-gs.fit(X_train, y_train)
-print(gs.best_params_)
-```
-
----
-
-### 6.4. Kibana — Navigation rapide
+### 5.3. Kibana - Navigation rapide
 
 | Fonctionnalité | Chemin |
 |---|---|
@@ -471,4 +438,4 @@ print(gs.best_params_)
 
 ---
 
-*FYC — Cybersécurité 5ème année — 2025/2026*
+*FYC - M2 - 2025/2026*
