@@ -1,0 +1,39 @@
+GET ssh-logs-*/_search
+{
+  "size": 0,
+  "query": {
+    "term": { "src_ip.keyword": "45.142.212.61" }
+  },
+  "aggs": {
+    "top_usernames": {
+      "terms": { "field": "username.keyword", "size": 10 }
+    }
+  }
+}
+
+
+GET ssh-logs-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "must": [
+        { "term": { "result.keyword": "Failed" } },
+        { "terms": { "src_ip.keyword": [
+            "185.220.101.45", "42.96.145.33", "165.232.189.42",
+            "103.45.67.89", "159.89.166.45", "45.142.212.61"
+        ]}}
+      ]
+    }
+  },
+  "aggs": {
+    "par_heure": {
+      "date_histogram": {
+        "field": "@timestamp",
+        "calendar_interval": "hour"
+      }
+    }
+  }
+}
+
+
