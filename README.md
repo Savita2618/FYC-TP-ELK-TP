@@ -11,9 +11,8 @@
 | Fichier | Description |
 |---|---|
 | `TP_Detection_ELK_ML_Sujet.md` | Sujet du TP |
-| `Scripts/ml_pipeline.py` | Pipeline ML supervisé (LR / RF / XGBoost) |
+| `Scripts/ml_pipeline.py` | Pipeline ML supervisé (Régression Logistique / Random Forest / XGBoost) |
 | `Scripts/generate_realistic.py` | Générateur de dataset SSH |
-| `Scripts/optimize_rf.py` | Optimisation GridSearchCV |
 | `assets/` | Diagrammes et captures |
 
 ## Infrastructure
