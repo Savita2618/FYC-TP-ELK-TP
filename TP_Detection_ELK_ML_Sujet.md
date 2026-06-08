@@ -1,8 +1,16 @@
 # TP - Mise en place d'un pipeline de détection d'intrusions avec ELK et Machine Learning
 
-**Version :** 1.0 &nbsp;&nbsp;&nbsp;&nbsp; **Création :** 06/2026 &nbsp;&nbsp;&nbsp;&nbsp; **Module :** FYC
+**Version :** 1.0 &nbsp;&nbsp;&nbsp;&nbsp;
 
-**Auteur :** Savita BALA, Swane CAMARA &nbsp;&nbsp;&nbsp;&nbsp; **Durée :** 3 heures &nbsp;&nbsp;&nbsp;&nbsp; **Niveau :** M2
+**Création :** 06/2026 &nbsp;&nbsp;&nbsp;&nbsp; 
+
+**Module :** FYC
+
+**Auteur :** Savita BALA, Swane CAMARA &nbsp;&nbsp;&nbsp;&nbsp; 
+
+**Durée :** 3 heures &nbsp;&nbsp;&nbsp;&nbsp; 
+
+**Niveau :** M2
 
 ---
 
@@ -217,9 +225,9 @@ Accédez à **ML → Anomaly Explorer** et sélectionnez le job de détection.
 
 L'Anomaly Timeline affiche les scores par IP source dans le temps. Plusieurs comportements distincts sont visibles :
 
-Les entrées avec `src_ip` vide correspondent aux événements système locaux — cron, systemd, PAM — qui n'ont pas d'IP source. Logstash ne peut pas extraire le champ, il reste vide. C'est du bruit de parsing, pas une attaque.
+Les entrées avec `src_ip` vide correspondent aux événements système locaux - cron, systemd, PAM - qui n'ont pas d'IP source. Logstash ne peut pas extraire le champ, il reste vide. C'est du bruit de parsing, pas une attaque.
 
-Les IPs internes comme `192.168.1.50` (score 95) présentent une anomalie de type "Unexpected zero value" : l'IP était habituellement active avec environ 47 connexions par fenêtre, puis a brutalement disparu. Machine éteinte ou maintenance — faux positif classique.
+Les IPs internes comme `192.168.1.50` (score 95) présentent une anomalie de type "Unexpected zero value" : l'IP était habituellement active avec environ 47 connexions par fenêtre, puis a brutalement disparu. Machine éteinte ou maintenance - faux positif classique.
 
 Les IPs externes comme `194.165.16.72` (score 21) présentent une anomalie de type "6x higher" : activité 6 fois supérieure à la normale. Score faible mais signal réellement suspect.
 
@@ -237,7 +245,7 @@ Seuils d'action recommandés pour le score d'anomalie :
 | 50 à 75 | Alerte automatique SIEM |
 | 75 à 100 | Blocage automatique |
 
-Elastic ML ne fait pas la différence entre une absence malveillante et une absence légitime. Il ne peut pas être utilisé seul en production — il doit être croisé avec d'autres sources, notamment le pipeline Python supervisé.
+Elastic ML ne fait pas la différence entre une absence malveillante et une absence légitime. Il ne peut pas être utilisé seul en production - il doit être croisé avec d'autres sources, notamment le pipeline Python supervisé.
 
 ---
 
@@ -325,11 +333,11 @@ Sur la sortie du terminal, observez la section `[4/6]` qui présente les résult
 
 **Comment fonctionnent ces trois modèles ?**
 
-**Régression Logistique** — C'est le modèle le plus simple. Il cherche une frontière linéaire (une droite ou un hyperplan) qui sépare les connexions normales des attaques dans l'espace des features. Si un événement tombe d'un côté de la frontière, il est classé normal ; de l'autre côté, attaque. Son avantage est sa rapidité et son interprétabilité. Sa limite : il suppose que la séparation entre les classes est linéaire, ce qui n'est pas toujours le cas en réalité.
+**Régression Logistique** - C'est le modèle le plus simple. Il cherche une frontière linéaire (une droite ou un hyperplan) qui sépare les connexions normales des attaques dans l'espace des features. Si un événement tombe d'un côté de la frontière, il est classé normal ; de l'autre côté, attaque. Son avantage est sa rapidité et son interprétabilité. Sa limite : il suppose que la séparation entre les classes est linéaire, ce qui n'est pas toujours le cas en réalité.
 
-**Random Forest** — C'est un ensemble de 100 arbres de décision entraînés indépendamment, chacun sur un sous-ensemble aléatoire des données et des features. Chaque arbre vote pour une classe, et la majorité l'emporte. Le fait de combiner plusieurs arbres imparfaits produit un modèle global robuste et précis. Il gère bien les relations non-linéaires et est résistant au surapprentissage.
+**Random Forest** - C'est un ensemble de 100 arbres de décision entraînés indépendamment, chacun sur un sous-ensemble aléatoire des données et des features. Chaque arbre vote pour une classe, et la majorité l'emporte. Le fait de combiner plusieurs arbres imparfaits produit un modèle global robuste et précis. Il gère bien les relations non-linéaires et est résistant au surapprentissage.
 
-**XGBoost** — C'est un algorithme de gradient boosting. Contrairement au Random Forest où les arbres sont construits en parallèle, ici ils sont construits en séquence. Chaque nouvel arbre se concentre sur les erreurs commises par les arbres précédents et cherche à les corriger. Le résultat est un modèle très performant, surtout sur des données tabulaires comme les nôtres, avec un temps d'entraînement très court.
+**XGBoost** - C'est un algorithme de gradient boosting. Contrairement au Random Forest où les arbres sont construits en parallèle, ici ils sont construits en séquence. Chaque nouvel arbre se concentre sur les erreurs commises par les arbres précédents et cherche à les corriger. Le résultat est un modèle très performant, surtout sur des données tabulaires comme les nôtres, avec un temps d'entraînement très court.
 
 ---
 
@@ -362,7 +370,7 @@ new_event = pd.DataFrame([{
 }])
 ```
 
-Le modèle retourne une probabilité d'attaque de 77% pour cet événement (3h du matin, IP externe, échec, authentification par mot de passe). Décision : ALERTER — investigation requise.
+Le modèle retourne une probabilité d'attaque de 77% pour cet événement (3h du matin, IP externe, échec, authentification par mot de passe). Décision : ALERTER - investigation requise.
 
 ---
 
