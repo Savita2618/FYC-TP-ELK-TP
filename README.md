@@ -20,7 +20,7 @@
 - **VM1 - elk-stack** : Ubuntu 24.04 / ELK 8.x / Filebeat + Logstash + Elasticsearch + Kibana
 - **VM2 - ml-python** : Ubuntu 24.04 / Python 3.12 / scikit-learn / XGBoost / imbalanced-learn
 
-Les images des VMs (VMDK) sont disponibles ici : **[https://reseauges75-my.sharepoint.com/:f:/g/personal/s_bala_myskolae_fr/IgDfPLAtK3pxQ6iYY0JfAbY4AYkoV-26e0sBwihwkCyXN68?e=7FsEw1]**  
+Les images des VMs (VMDK) sont disponibles ici : **[https://1drv.ms/f/c/6C98EFB1E9D56559/IgCablbp_YBFQpwcxkryG18BAfwSXfYPsw9omtij-aD--vE?e=vm2OtK]**  
 
 → Voir [IMPORT_VMS.md](IMPORT_VMS.md) pour les importer dans VirtualBox ou VMware.
 
