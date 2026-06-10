@@ -2,7 +2,7 @@
 
 ## Téléchargement
 
-Les deux images VMDK sont disponibles ici : **[https://reseauges75-my.sharepoint.com/:f:/g/personal/s_bala_myskolae_fr/IgDfPLAtK3pxQ6iYY0JfAbY4AYkoV-26e0sBwihwkCyXN68?e=7FsEw1]**
+Les deux images VMDK sont disponibles ici : **[https://1drv.ms/f/c/6C98EFB1E9D56559/IgCablbp_YBFQpwcxkryG18BAfwSXfYPsw9omtij-aD--vE?e=vm2OtK]**
 
 
 | Fichier | Taille | Contenu |
