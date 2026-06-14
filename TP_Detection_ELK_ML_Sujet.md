@@ -28,7 +28,7 @@
 
 ### 1.1. Contexte
 
-Dans ce TP, vous allez construire une chaîne complète de détection d'intrusions SSH, en combinant trois approches :
+Dans ce TP, vous allez construire une chaîne complète de détection d'intrusions, en combinant trois approches :
 
 La stack ELK pour la collecte, le parsing et la visualisation des logs.
 
@@ -231,7 +231,7 @@ Les IPs internes comme `192.168.1.50` (score 95) présentent une anomalie de typ
 
 Les IPs externes comme `194.165.16.72` (score 21) présentent une anomalie de type "6x higher" : activité 6 fois supérieure à la normale. Score faible mais signal réellement suspect.
 
-Un score élevé n'est pas synonyme d'attaque. "Higher" est suspect, "zero value" est souvent bénin. Il faut toujours lire la description et remettre le score dans son contexte.
+Un score élevé n'est pas synonyme d'attaque. Il faut toujours lire la description et remettre le score dans son contexte.
 
 ---
 
@@ -296,7 +296,7 @@ Les variables textuelles `username` et `src_ip` doivent être encodées en entie
 
 ### 4.3. Prétraitement et SMOTE
 
-Découpage stratifié train/test (70%/30%) :
+Découpage train/test (70%/30%) :
 
 ```python
 from sklearn.model_selection import train_test_split
