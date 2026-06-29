@@ -141,19 +141,19 @@ Ouvrez Kibana dans votre navigateur, accédez au dashboard et cliquez sur **SSH 
 
 Ce dashboard contient quatre visualisations :
 
-La **timeline Accepted/Failed** montre l'évolution du trafic SSH dans le temps, permettant de repérer des pics d'échecs d'authentification.
+Les machines qui génèrent le plus de trafic apparaissent en premier. Pas de surprise : ce sont des IPs internes, ce qui est normal puisque 85% du trafic du dataset est du trafic légitime.
 
-Le **top des IPs sources** affiche les machines les plus actives. Les IPs internes dominent le classement, ce qui est cohérent avec la distribution du dataset où 85% du trafic est légitime.
+On retrouve en tête des noms comme `admin`, `test`, `postgres` ou `root`. C'est le signe d'une attaque par dictionnaire : les attaquants essaient les noms les plus courants en espérant qu'un compte soit resté ouvert ou mal sécurisé.
 
-Le **top des usernames ciblés** révèle les comptes les plus exposés. La présence de comptes génériques comme `admin`, `test`, `postgres` ou `root` indique des tentatives par dictionnaire.
-
-Le **pie chart des méthodes d'authentification** affiche environ 60% `publickey` et 40% `password`. Cette proportion montre que l'authentification par mot de passe reste trop présente et augmente la surface d'attaque brute-force.
+Le **pie chart des méthodes d'authentification** affiche environ 60% des connexions passent par clé publique, 40% par mot de passe. Cette proportion montre que l'authentification par mot de passe reste trop présente et augmente la d'attaque brute-force.
 
 ---
 
 ### 2.5. Requêtes DSL Elasticsearch
 
 Accédez à **Kibana → Dev Tools** pour exécuter les requêtes suivantes.
+
+On peut lancer des requêtes pour voir quels sont les usernames ciblés par une IP , ou suivre dans le temps les tentatives échouées sur des IPs attaquantes connues.
 
 **Top usernames ciblés par une IP suspecte :**
 
@@ -208,7 +208,8 @@ GET ssh-logs-*/_search
 
 Accédez à **Kibana → Machine Learning → Anomaly Detection → Jobs**.
 
-Le job existant `ssh-brute-force-detection` surveille le volume de connexions par IP source sur des fenêtres de 5 minutes. Elastic ML modélise la baseline de chaque entité et attribue un score d'anomalie de 0 à 100 quand un comportement s'écarte significativement de cette baseline.
+Le job `ssh-brute-force-detection` surveille le nombre de connexions par IP toutes les 5 minutes. Il apprend ce qui est "normal" pour chaque IP, puis génère un score entre 0 et 100 dès qu'une activité s'en écarte.
+
 
 | Paramètre | Valeur |
 |---|---|
@@ -225,11 +226,11 @@ Accédez à **ML → Anomaly Explorer** et sélectionnez le job de détection.
 
 L'Anomaly Timeline affiche les scores par IP source dans le temps. Plusieurs comportements distincts sont visibles :
 
-Les entrées avec `src_ip` vide correspondent aux événements système locaux - cron, systemd, PAM - qui n'ont pas d'IP source. Logstash ne peut pas extraire le champ, il reste vide. C'est du bruit de parsing, pas une attaque.
+Les entrées avec `src_ip` vide correspondent aux événements système locaux comme cron, systemd, PAM est qui n'ont pas d'IP source. Logstash ne peut pas extraire le champ, il reste vide. C'est du bruit de parsing pas une attaque.
 
-Les IPs internes comme `192.168.1.50` (score 95) présentent une anomalie de type "Unexpected zero value" : l'IP était habituellement active avec environ 47 connexions par fenêtre, puis a brutalement disparu. Machine éteinte ou maintenance - faux positif classique.
+Les IPs internes comme `192.168.1.50` (score 95) présentent une anomalie de type "Unexpected zero value" : l'IP était habituellement active avec environ 47 connexions par fenêtre, puis a brutalement disparu. Machine éteinte ou maintenance c'est faux positif classique.
 
-Les IPs externes comme `194.165.16.72` (score 21) présentent une anomalie de type "6x higher" : activité 6 fois supérieure à la normale. Score faible mais signal réellement suspect.
+Les IPs externes comme `194.165.16.72` (score 21) présentent une anomalie de type "6x higher", activité 6 fois supérieure à la normale. Score faible mais signal réellement suspect.
 
 Un score élevé n'est pas synonyme d'attaque. Il faut toujours lire la description et remettre le score dans son contexte.
 
@@ -385,7 +386,7 @@ Le modèle retourne une probabilité d'attaque de 77% pour cet événement (3h d
 | Facilité de mise à jour | Automatique | Réentraînement requis |
 | Interprétabilité | Score uniquement | Probabilité + feature importance |
 
-Dans un SOC réel, les deux approches se combinent en pipeline : Elastic ML détecte les comportements anormaux, y compris les attaques inconnues, tandis que Python ML prend le relais pour classifier rapidement les patterns connus et leur associer une probabilité chiffrée.
+Dans un SOC réel, les deux approches se combinent en pipeline, Elastic ML détecte les comportements anormaux, y compris les attaques inconnues, tandis que Python ML prend le relais pour classifier rapidement les patterns connus et leur associer une probabilité chiffrée.
 
 ---
 
