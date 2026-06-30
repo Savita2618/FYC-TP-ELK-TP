@@ -141,9 +141,11 @@ Ouvrez Kibana dans votre navigateur, accédez au dashboard et cliquez sur **SSH 
 
 Ce dashboard contient quatre visualisations :
 
+La timeline Accepted/Failed montre l'évolution du trafic SSH dans le temps, permettant de repérer des pics d'échecs d'authentification. 
+
 Les machines qui génèrent le plus de trafic apparaissent en premier. Pas de surprise : ce sont des IPs internes, ce qui est normal puisque 85% du trafic du dataset est du trafic légitime.
 
-On retrouve en tête des noms comme `admin`, `test`, `postgres` ou `root`. C'est le signe d'une attaque par dictionnaire : les attaquants essaient les noms les plus courants en espérant qu'un compte soit resté ouvert ou mal sécurisé.
+On retrouve des noms comme `admin`, `test`, `postgres` ou `root`. C'est le signe d'une attaque par dictionnaire : les attaquants essaient les noms les plus courants en espérant qu'un compte soit resté ouvert ou mal sécurisé.
 
 Le **pie chart des méthodes d'authentification** affiche environ 60% des connexions passent par clé publique, 40% par mot de passe. Cette proportion montre que l'authentification par mot de passe reste trop présente et augmente la d'attaque brute-force.
 
